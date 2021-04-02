@@ -21,11 +21,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SystemUtils.enableFullScreenUI(this);
+        //SystemUtils.enableFullScreenUI(this);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
         setContentView(R.layout.activity_main);
 
         init();
-
     }
 
     private void init() {
@@ -52,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onSettingsClick() {
         Log.d(TAG, "onSettingsClick");
+
+        Settings settingsFrag = new Settings();
+        settingsFrag.show(getSupportFragmentManager(), "Setting-Page");
     }
 
     private void onLevelListClick() {
@@ -60,5 +65,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onPlayClick() {
         Log.d(TAG, "onPlayClick");
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus){
+            SystemUtils.enableFullScreenUI(this);
+        }
     }
 }
