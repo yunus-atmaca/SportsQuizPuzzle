@@ -14,15 +14,14 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="SettingsAnim">
+    <style name="anim_slide">
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
 
-    <style name="FullScreen">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="theme">@android:style/Theme.NoTitleBar.Fullscreen</item>
-        <item name="android:windowTranslucentStatus">true</item>
+    <style
+        name="anim_fade" >
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 </resources>

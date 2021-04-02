@@ -1,23 +1,18 @@
 package com.sportsquizpuzzle;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.sportsquizpuzzle.customViews.Modal;
 import com.sportsquizpuzzle.utils.Constants;
 import com.sportsquizpuzzle.utils.SharedValues;
-import com.sportsquizpuzzle.utils.SystemUtils;
 
 public class Settings extends DialogFragment implements View.OnClickListener {
 
@@ -28,14 +23,12 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     private ImageView music;
     private ImageView sound;
     private ImageView language;
-    private ImageView remove;
-    private ImageView close;
 
     private boolean soundOn;
     private boolean musicOn;
     private String lan;
 
-    private SettingListener listener;
+    private final SettingListener listener;
 
     public Settings(SettingListener listener){
         this.listener = listener;
@@ -44,7 +37,11 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getDialog().getWindow().getAttributes().windowAnimations = R.style.SettingsAnim;
+
+        if(getDialog() == null)
+            return;
+
+        getDialog().getWindow().setWindowAnimations(R.style.anim_slide);
     }
 
     @Override
@@ -68,14 +65,13 @@ public class Settings extends DialogFragment implements View.OnClickListener {
         music = root.findViewById(R.id.music);
         sound = root.findViewById(R.id.sound);
         language = root.findViewById(R.id.language);
-        remove = root.findViewById(R.id.remove);
-        close = root.findViewById(R.id.close);
+
+        root.findViewById(R.id.remove).setOnClickListener(this);
+        root.findViewById(R.id.close).setOnClickListener(this);
 
         music.setOnClickListener(this);
         sound.setOnClickListener(this);
         language.setOnClickListener(this);
-        remove.setOnClickListener(this);
-        close.setOnClickListener(this);
 
         music.setImageResource(musicOn ? R.drawable.ic_music_on : R.drawable.ic_music_off);
         sound.setImageResource(soundOn ? R.drawable.ic_sound_on : R.drawable.ic_sound_off);
@@ -83,6 +79,9 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     }
 
     private void getAppValues() {
+        if(getContext() == null)
+            return;
+
         soundOn = SharedValues.getBoolean(getContext(), Constants.KEY_SOUND, true);
         musicOn = SharedValues.getBoolean(getContext(), Constants.KEY_MUSIC, true);
         lan = SharedValues.getString(getContext(), Constants.KEY_LANGUAGE, Constants.LAN_ENG);
@@ -141,19 +140,26 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     }
 
     private void onClickRemove() {
+        Modal modal = new Modal(getString(R.string.remove_warning));
+        modal.show(getChildFragmentManager(), "Modal-Remove");
+    }
 
+    @Override
+    public void onDestroy() {
+        if(getContext() == null){
+            super.onDestroy();
+            return;
+        }
+
+        SharedValues.setBoolean(getContext(), Constants.KEY_SOUND, soundOn);
+        SharedValues.setBoolean(getContext(), Constants.KEY_MUSIC, musicOn);
+        SharedValues.setString(getContext(), Constants.KEY_LANGUAGE, lan);
+
+        super.onDestroy();
     }
 
     public interface SettingListener {
         void onLanguageChanged(String lan);
         void onMusicClicked(boolean music);
-    }
-
-    @Override
-    public void onDestroy() {
-        SharedValues.setBoolean(getContext(), Constants.KEY_SOUND, soundOn);
-        SharedValues.setBoolean(getContext(), Constants.KEY_MUSIC, musicOn);
-        SharedValues.setString(getContext(), Constants.KEY_LANGUAGE, lan);
-        super.onDestroy();
     }
 }

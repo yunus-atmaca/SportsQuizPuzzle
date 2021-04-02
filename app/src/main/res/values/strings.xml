@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SportsQuizPuzzle</string>
+
+    <string name="remove_warning">Are you sure you want to delete progress?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
