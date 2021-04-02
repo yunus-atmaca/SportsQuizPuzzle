@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.sportsquizpuzzle.utils.SystemUtils;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Settings.SettingListener {
 
     private static final String TAG = "Main-Activity";
 
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void onSettingsClick() {
         Log.d(TAG, "onSettingsClick");
 
-        Settings settingsFrag = new Settings();
+        Settings settingsFrag = new Settings(this);
         settingsFrag.show(getSupportFragmentManager(), "Setting-Page");
     }
 
@@ -73,5 +73,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(hasFocus){
             SystemUtils.enableFullScreenUI(this);
         }
+    }
+
+    @Override
+    public void onLanguageChanged(String lan) {
+
+    }
+
+    @Override
+    public void onMusicClicked(boolean music) {
+
     }
 }

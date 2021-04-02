@@ -10,12 +10,19 @@
         <item name="colorSecondaryVariant">@color/colorOnSecondary</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <!-- Customize your theme here. -->
     </style>
 
     <style name="SettingsAnim">
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+
+    <style name="FullScreen">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="theme">@android:style/Theme.NoTitleBar.Fullscreen</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 </resources>

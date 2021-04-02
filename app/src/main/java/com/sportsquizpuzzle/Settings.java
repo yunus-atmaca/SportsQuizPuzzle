@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.sportsquizpuzzle.utils.Constants;
+import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.SystemUtils;
 
 public class Settings extends DialogFragment implements View.OnClickListener {
@@ -29,6 +31,16 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     private ImageView remove;
     private ImageView close;
 
+    private boolean soundOn;
+    private boolean musicOn;
+    private String lan;
+
+    private SettingListener listener;
+
+    public Settings(SettingListener listener){
+        this.listener = listener;
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -38,15 +50,7 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_FRAME, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen);
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-
-        //SystemUtils.enableFullScreenUI((AppCompatActivity) getActivity());
-        return super.onCreateDialog(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen);
     }
 
     @Nullable
@@ -54,8 +58,7 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.settings, container, false);
 
-        //SystemUtils.enableFullScreenUI((AppCompatActivity) getActivity());
-
+        getAppValues();
         init();
 
         return root;
@@ -73,14 +76,22 @@ public class Settings extends DialogFragment implements View.OnClickListener {
         language.setOnClickListener(this);
         remove.setOnClickListener(this);
         close.setOnClickListener(this);
+
+        music.setImageResource(musicOn ? R.drawable.ic_music_on : R.drawable.ic_music_off);
+        sound.setImageResource(soundOn ? R.drawable.ic_sound_on : R.drawable.ic_sound_off);
+        language.setImageResource(lan.equals(Constants.LAN_ENG) ? R.drawable.ic_lan_en : R.drawable.ic_lan_ru);
+    }
+
+    private void getAppValues() {
+        soundOn = SharedValues.getBoolean(getContext(), Constants.KEY_SOUND, true);
+        musicOn = SharedValues.getBoolean(getContext(), Constants.KEY_MUSIC, true);
+        lan = SharedValues.getString(getContext(), Constants.KEY_LANGUAGE, Constants.LAN_ENG);
     }
 
     @Override
     public void onClick(View view) {
-
         if (view.getId() == R.id.music) {
             onClickMusic();
-            Log.d(TAG, "onClick");
         } else if (view.getId() == R.id.sound) {
             onClickSound();
         } else if (view.getId() == R.id.language) {
@@ -96,27 +107,37 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     }
 
     private void onClickMusic() {
-        if (music.getBackground() == ContextCompat.getDrawable(getContext(), R.drawable.ic_music_off)) {
-            music.setImageResource(R.drawable.ic_music_on);
-        } else {
+        if (musicOn) {
+            musicOn = false;
             music.setImageResource(R.drawable.ic_music_off);
+        } else {
+            musicOn = true;
+            music.setImageResource(R.drawable.ic_music_on);
         }
+
+        listener.onMusicClicked(musicOn);
     }
 
     private void onClickSound() {
-        if (sound.getBackground() == ContextCompat.getDrawable(getContext(), R.drawable.ic_sound_off)) {
-            sound.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_sound_on));
+        if (soundOn) {
+            soundOn = false;
+            sound.setImageResource(R.drawable.ic_sound_off);
         } else {
-            sound.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_sound_off));
+            soundOn = true;
+            sound.setImageResource(R.drawable.ic_sound_on);
         }
     }
 
     private void onClickLanguage() {
-        if (language.getBackground() == ContextCompat.getDrawable(getContext(), R.drawable.ic_lan_en)) {
-            language.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_lan_ru));
+        if (lan.equals(Constants.LAN_ENG)) {
+            lan = Constants.LAN_RU;
+            language.setImageResource(R.drawable.ic_lan_ru);
         } else {
-            language.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_lan_en));
+            lan = Constants.LAN_ENG;
+            language.setImageResource(R.drawable.ic_lan_en);
         }
+
+        listener.onLanguageChanged(lan);
     }
 
     private void onClickRemove() {
@@ -124,25 +145,15 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     }
 
     public interface SettingListener {
-        void onClickMusic();
-
-        void onClickSound();
-
-        void onClickLanguage();
-
-        void onClickRemove();
+        void onLanguageChanged(String lan);
+        void onMusicClicked(boolean music);
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        Dialog dialog = getDialog();
-        if (dialog != null)
-        {
-            int width = ViewGroup.LayoutParams.MATCH_PARENT;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            dialog.getWindow().setLayout(width, height);
-        }
+    public void onDestroy() {
+        SharedValues.setBoolean(getContext(), Constants.KEY_SOUND, soundOn);
+        SharedValues.setBoolean(getContext(), Constants.KEY_MUSIC, musicOn);
+        SharedValues.setString(getContext(), Constants.KEY_LANGUAGE, lan);
+        super.onDestroy();
     }
 }
