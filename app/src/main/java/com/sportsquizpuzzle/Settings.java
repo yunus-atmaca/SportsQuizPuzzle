@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.sportsquizpuzzle.customViews.Modal;
 import com.sportsquizpuzzle.utils.Constants;
+import com.sportsquizpuzzle.utils.SPHelper;
 import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.i18n;
 
@@ -34,6 +35,8 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     private boolean soundOn;
     private boolean musicOn;
     private String lan;
+
+    private SPHelper spHelper;
 
     private final SettingListener listener;
 
@@ -69,6 +72,8 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     }
 
     private void init() {
+        spHelper = new SPHelper(getContext(), new int[]{SPHelper.BUTTON, SPHelper.DELETE}, soundOn);
+
         music = root.findViewById(R.id.music);
         sound = root.findViewById(R.id.sound);
         language = root.findViewById(R.id.language);
@@ -105,6 +110,8 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
         } else if (view.getId() == R.id.remove) {
             onClickRemove();
         } else if (view.getId() == R.id.close) {
+            spHelper.play(SPHelper.BUTTON);
+
             dismiss();
             onDestroy();
         } else {
@@ -113,6 +120,8 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     }
 
     private void onClickMusic() {
+        spHelper.play(SPHelper.BUTTON);
+
         if (musicOn) {
             musicOn = false;
             music.setImageResource(R.drawable.ic_music_off);
@@ -127,14 +136,20 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     private void onClickSound() {
         if (soundOn) {
             soundOn = false;
+            spHelper.setSoundOn(false);
             sound.setImageResource(R.drawable.ic_sound_off);
         } else {
+            spHelper.setSoundOn(true);
+            spHelper.play(SPHelper.BUTTON);
             soundOn = true;
             sound.setImageResource(R.drawable.ic_sound_on);
         }
+
+        this.listener.onSoundClicked(soundOn);
     }
 
     private void onClickLanguage() {
+        spHelper.play(SPHelper.BUTTON);
         if (lan.equals(Constants.LAN_ENG)) {
             lan = Constants.LAN_RU;
             language.setImageResource(R.drawable.ic_lan_ru);
@@ -149,6 +164,8 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     }
 
     private void onClickRemove() {
+        spHelper.play(SPHelper.BUTTON);
+
         Modal modal = new Modal(getString(R.string.remove_warning), this);
         modal.show(getChildFragmentManager(), "Modal-Remove");
     }
@@ -156,15 +173,21 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     @Override
     public void onModalResult(boolean res) {
         if (res) {
+            spHelper.play(SPHelper.DELETE);
+
             if(getContext() == null)
                 return;
 
             SharedValues.setInt(getContext(), Constants.KEY_CURRENT_LEVEL, -1);
+        }else{
+            spHelper.play(SPHelper.BUTTON);
         }
     }
 
     @Override
     public void onDestroy() {
+        spHelper.release();
+
         if (getContext() == null) {
             super.onDestroy();
             return;
@@ -188,5 +211,6 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     public interface SettingListener {
         //void onLanguageChanged(String lan);
         void onMusicClicked(boolean music);
+        void onSoundClicked(boolean sound);
     }
 }
