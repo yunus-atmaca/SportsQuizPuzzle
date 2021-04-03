@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -43,6 +44,8 @@ public class Levels extends DialogFragment implements View.OnClickListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen);
+
+
     }
 
     @Nullable
@@ -56,10 +59,15 @@ public class Levels extends DialogFragment implements View.OnClickListener {
     }
 
     private void init() {
-        if (getContext() == null)
-            return;
+        String language = Constants.LAN_ENG;
 
-        currentLevel = SharedValues.getInt(getContext(), Constants.KEY_CURRENT_LEVEL, -1);
+        if (getContext() != null){
+            currentLevel = SharedValues.getInt(getContext(), Constants.KEY_CURRENT_LEVEL, -1);
+            language = SharedValues.getString(getContext(), Constants.KEY_LANGUAGE, Constants.LAN_ENG);
+        }
+
+        ((ImageView) root.findViewById(R.id.levels)).setImageResource(language.equals(Constants.LAN_ENG) ?
+                R.drawable.ic_levels : R.drawable.ic_levels_ru);
 
         levels = new ArrayList<>();
         levels.add(root.findViewById(R.id.level_1));

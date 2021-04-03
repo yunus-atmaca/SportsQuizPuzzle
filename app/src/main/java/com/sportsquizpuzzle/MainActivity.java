@@ -8,15 +8,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.sportsquizpuzzle.utils.Constants;
+import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.SystemUtils;
+import com.sportsquizpuzzle.utils.i18n;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Settings.SettingListener {
 
     private static final String TAG = "Main-Activity";
 
-    private ImageView play;
-    private ImageView levelList;
-    private ImageView settings;
+    private String lan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,23 +32,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
-        play = findViewById(R.id.play);
-        play.setOnClickListener(this);
-        levelList = findViewById(R.id.level_list);
-        levelList.setOnClickListener(this);
-        settings = findViewById(R.id.settings);
-        settings.setOnClickListener(this);
+        String lan = SharedValues.getString(getApplicationContext(), Constants.KEY_LANGUAGE, Constants.LAN_ENG);
+        Log.d(TAG, lan);
+        i18n.loadLanguage(this, lan);
+
+        findViewById(R.id.play).setOnClickListener(this);
+        findViewById(R.id.level_list).setOnClickListener(this);
+        findViewById(R.id.settings).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.play){
+        if (view.getId() == R.id.play) {
             onPlayClick();
-        }else if(view.getId() == R.id.settings){
+        } else if (view.getId() == R.id.settings) {
             onSettingsClick();
-        }else if(view.getId() == R.id.level_list){
+        } else if (view.getId() == R.id.level_list) {
             onLevelListClick();
-        }else{
+        } else {
             Log.d(TAG, "Unimplemented call");
         }
     }
@@ -70,14 +72,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if(hasFocus){
+        if (hasFocus) {
             SystemUtils.enableFullScreenUI(this);
         }
-    }
-
-    @Override
-    public void onLanguageChanged(String lan) {
-
     }
 
     @Override

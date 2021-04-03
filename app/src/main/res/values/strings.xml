@@ -1,7 +1,18 @@
 <resources>
-    <string name="app_name">SportsQuizPuzzle</string>
+    <string name="app_name">Sports Quiz Puzzle</string>
 
     <string name="remove_warning">Are you sure you want to delete progress?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    <string name="soccer">Soccer</string>
+    <string name="basketball">Basketball</string>
+    <string name="volleyball">Volleyball</string>
+    <string name="tennis">Tennis</string>
+    <string name="hockey">Hockey</string>
+    <string name="pool">Pool</string>
+    <string name="bowling">Bowling</string>
+    <string name="golf">Golf</string>
+
+
 </resources>

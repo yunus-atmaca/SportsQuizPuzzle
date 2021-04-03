@@ -1,10 +1,13 @@
 package com.sportsquizpuzzle;
 
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -13,8 +16,12 @@ import androidx.fragment.app.DialogFragment;
 import com.sportsquizpuzzle.customViews.Modal;
 import com.sportsquizpuzzle.utils.Constants;
 import com.sportsquizpuzzle.utils.SharedValues;
+import com.sportsquizpuzzle.utils.i18n;
 
-public class Settings extends DialogFragment implements View.OnClickListener {
+import java.util.Locale;
+import java.util.Objects;
+
+public class Settings extends DialogFragment implements View.OnClickListener, Modal.ModalListener {
 
     private static final String TAG = "Setting-Fragment";
 
@@ -30,7 +37,7 @@ public class Settings extends DialogFragment implements View.OnClickListener {
 
     private final SettingListener listener;
 
-    public Settings(SettingListener listener){
+    public Settings(SettingListener listener) {
         this.listener = listener;
     }
 
@@ -38,7 +45,7 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(getDialog() == null)
+        if (getDialog() == null)
             return;
 
         getDialog().getWindow().setWindowAnimations(R.style.anim_slide);
@@ -79,7 +86,7 @@ public class Settings extends DialogFragment implements View.OnClickListener {
     }
 
     private void getAppValues() {
-        if(getContext() == null)
+        if (getContext() == null)
             return;
 
         soundOn = SharedValues.getBoolean(getContext(), Constants.KEY_SOUND, true);
@@ -131,22 +138,34 @@ public class Settings extends DialogFragment implements View.OnClickListener {
         if (lan.equals(Constants.LAN_ENG)) {
             lan = Constants.LAN_RU;
             language.setImageResource(R.drawable.ic_lan_ru);
+
+            i18n.loadLanguage(getActivity(), Constants.LAN_RU);
         } else {
             lan = Constants.LAN_ENG;
             language.setImageResource(R.drawable.ic_lan_en);
-        }
 
-        listener.onLanguageChanged(lan);
+            i18n.loadLanguage(getActivity(), Constants.LAN_ENG);
+        }
     }
 
     private void onClickRemove() {
-        Modal modal = new Modal(getString(R.string.remove_warning));
+        Modal modal = new Modal(getString(R.string.remove_warning), this);
         modal.show(getChildFragmentManager(), "Modal-Remove");
     }
 
     @Override
+    public void onModalResult(boolean res) {
+        if (res) {
+            if(getContext() == null)
+                return;
+
+            SharedValues.setInt(getContext(), Constants.KEY_CURRENT_LEVEL, -1);
+        }
+    }
+
+    @Override
     public void onDestroy() {
-        if(getContext() == null){
+        if (getContext() == null) {
             super.onDestroy();
             return;
         }
@@ -158,8 +177,16 @@ public class Settings extends DialogFragment implements View.OnClickListener {
         super.onDestroy();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Objects.requireNonNull(getDialog()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+    }
+
     public interface SettingListener {
-        void onLanguageChanged(String lan);
+        //void onLanguageChanged(String lan);
         void onMusicClicked(boolean music);
     }
 }

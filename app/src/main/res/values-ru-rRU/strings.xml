@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sports Quiz Puzzle</string>
+
+    <string name="remove_warning">Вы действительно хотите удалить весь прогресс?</string>
+    <string name="yes">да</string>
+    <string name="no">нет</string>
+
+    <string name="soccer">Футбол</string>
+    <string name="basketball">баскетбол</string>
+    <string name="volleyball">волейбол</string>
+    <string name="tennis">теннис</string>
+    <string name="hockey">хоккей</string>
+    <string name="pool">бильярд</string>
+    <string name="bowling">боулинг</string>
+    <string name="golf">гольф</string>
+</resources>

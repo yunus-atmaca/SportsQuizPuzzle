@@ -13,8 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.sportsquizpuzzle.R;
-import com.sportsquizpuzzle.utils.Constants;
-import com.sportsquizpuzzle.utils.SharedValues;
 
 import java.util.Objects;
 
@@ -24,8 +22,11 @@ public class Modal extends DialogFragment implements View.OnClickListener {
 
     private final String message;
 
-    public Modal(String message){
+    private final ModalListener listener;
+
+    public Modal(String message, ModalListener listener){
         this.message = message;
+        this.listener = listener;
     }
 
     @Override
@@ -70,20 +71,20 @@ public class Modal extends DialogFragment implements View.OnClickListener {
     }
 
     private void yesClicked(){
-        if(getContext() == null){
-            dismiss();
-            onDestroy();
-            return;
-        }
-
-        SharedValues.setInt(getContext(), Constants.KEY_CURRENT_LEVEL, -1);
+        listener.onModalResult(true);
 
         dismiss();
         onDestroy();
     }
 
     private void noClicked(){
+        listener.onModalResult(false);
+
         dismiss();
         onDestroy();
+    }
+
+    public interface ModalListener{
+        void onModalResult(boolean res);
     }
 }
