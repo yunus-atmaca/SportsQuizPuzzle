@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -50,8 +49,6 @@ public class SPService extends Service implements SoundPool.OnLoadCompleteListen
         lose = sp.load(this, Constants.LOSE, 1);
         win = sp.load(this, Constants.WIN, 1);
         startGame = sp.load(this, Constants.START_GAME, 1);
-
-        Log.d(TAG, "MUSIC---> " + musicOn);
     }
 
     public void play(int sound) {

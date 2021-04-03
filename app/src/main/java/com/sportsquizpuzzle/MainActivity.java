@@ -18,19 +18,21 @@ import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.SystemUtils;
 import com.sportsquizpuzzle.utils.i18n;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Levels.LevelListener {
 
     private static final String TAG = "Main-Activity";
 
     private SPService spService = null;
     private boolean serviceBound;
 
+    private int currentLevel = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //SystemUtils.enableFullScreenUI(this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        SystemUtils.enableFullScreenUI(this);
+        /*getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);*/
 
         setContentView(R.layout.activity_main);
 
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String lan = SharedValues.getString(getApplicationContext(), Constants.KEY_LANGUAGE, Constants.LAN_ENG);
         i18n.loadLanguage(this, lan);
 
+        currentLevel = SharedValues.getInt(getApplicationContext(), Constants.KEY_CURRENT_LEVEL, 1);
 
         findViewById(R.id.play).setOnClickListener(this);
         findViewById(R.id.level_list).setOnClickListener(this);
@@ -66,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onSettingsClick() {
         //Log.d(TAG, "onSettingsClick");
-
         if(serviceBound)
             spService.play(Constants.BUTTON);
 
@@ -76,16 +78,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onLevelListClick() {
         //Log.d(TAG, "onLevelListClick");
-
         if(serviceBound)
             spService.play(Constants.BUTTON);
+
+        Levels levels = new Levels(this);
+        levels.show(getSupportFragmentManager(), "Levels-Page");
     }
 
     private void onPlayClick() {
         //Log.d(TAG, "onPlayClick");
-
         if(serviceBound)
             spService.play(Constants.START_GAME);
+
+        Intent intent = new Intent(MainActivity.this, Game.class);
+        intent.putExtra("level", currentLevel);
+        MainActivity.this.startActivity(intent);
+    }
+
+    @Override
+    public void onLevelSelected(int level) {
+        currentLevel = level;
     }
 
     @Override
@@ -113,13 +125,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             serviceBound = false;
         }
     };
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        if(spService == null){
-
-        }
-    }
 }
