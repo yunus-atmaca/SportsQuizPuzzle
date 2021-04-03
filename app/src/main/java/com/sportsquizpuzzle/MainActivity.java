@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 
 import com.sportsquizpuzzle.utils.Constants;
 import com.sportsquizpuzzle.utils.SPService;
@@ -18,7 +17,7 @@ import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.SystemUtils;
 import com.sportsquizpuzzle.utils.i18n;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, Levels.LevelListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, ChooseLevels.LevelListener {
 
     private static final String TAG = "Main-Activity";
 
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(serviceBound)
             spService.play(Constants.BUTTON);
 
-        Levels levels = new Levels(this);
+        ChooseLevels levels = new ChooseLevels(this);
         levels.show(getSupportFragmentManager(), "Levels-Page");
     }
 

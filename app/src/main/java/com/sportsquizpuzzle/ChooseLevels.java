@@ -23,7 +23,7 @@ import com.sportsquizpuzzle.utils.SharedValues;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Levels extends DialogFragment implements View.OnClickListener {
+public class ChooseLevels extends DialogFragment implements View.OnClickListener {
     private static final String TAG = "Levels-Fragment";
 
     private View root;
@@ -36,7 +36,7 @@ public class Levels extends DialogFragment implements View.OnClickListener {
 
     private LevelListener listener;
 
-    public Levels(LevelListener listener) {
+    public ChooseLevels(LevelListener listener) {
         this.listener = listener;
     }
 
@@ -58,7 +58,7 @@ public class Levels extends DialogFragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.levels, container, false);
+        root = inflater.inflate(R.layout.choose_levels, container, false);
 
         init();
 
