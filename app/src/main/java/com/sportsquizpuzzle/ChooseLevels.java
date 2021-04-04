@@ -28,13 +28,12 @@ public class ChooseLevels extends DialogFragment implements View.OnClickListener
 
     private View root;
 
-    private ArrayList<ImageView> levels;
     private int currentLevel = 1;
 
     private SPService spService = null;
     private boolean serviceBound;
 
-    private LevelListener listener;
+    private final LevelListener listener;
 
     public ChooseLevels(LevelListener listener) {
         this.listener = listener;
@@ -79,7 +78,7 @@ public class ChooseLevels extends DialogFragment implements View.OnClickListener
         ((ImageView) root.findViewById(R.id.levels)).setImageResource(language.equals(Constants.LAN_ENG) ?
                 R.drawable.ic_levels : R.drawable.ic_levels_ru);
 
-        levels = new ArrayList<>();
+        ArrayList<ImageView> levels = new ArrayList<>();
         levels.add(root.findViewById(R.id.level_1));
         levels.add(root.findViewById(R.id.level_2));
         levels.add(root.findViewById(R.id.level_3));
@@ -139,6 +138,9 @@ public class ChooseLevels extends DialogFragment implements View.OnClickListener
                 applyChanges(8);
             }
         } else if (view.getId() == R.id.close) {
+            if (serviceBound)
+                spService.play(Constants.BUTTON);
+
             dismiss();
             onDestroy();
         } else {

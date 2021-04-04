@@ -5,12 +5,16 @@ public class Level {
     private int levelNumber;
     private Piece [] pieces;
     private String objectName;
+    private int targetLayoutId;
+    private int piecesLayoutId;
 
-    public Level(String name, int levelNumber, Piece[] pieces, String objectName) {
+    public Level(String name, int levelNumber, Piece[] pieces, String objectName, int targetLayoutId, int piecesLayoutId) {
         this.name = name;
         this.levelNumber = levelNumber;
         this.pieces = pieces;
         this.objectName = objectName;
+        this.targetLayoutId = targetLayoutId;
+        this.piecesLayoutId = piecesLayoutId;
     }
 
     public String getName() {
@@ -43,5 +47,21 @@ public class Level {
 
     public void setObjectName(String objectName) {
         this.objectName = objectName;
+    }
+
+    public int getTargetLayoutId() {
+        return targetLayoutId;
+    }
+
+    public void setTargetLayoutId(int targetLayoutId) {
+        this.targetLayoutId = targetLayoutId;
+    }
+
+    public int getPiecesLayoutId() {
+        return piecesLayoutId;
+    }
+
+    public void setPiecesLayoutId(int piecesLayoutId) {
+        this.piecesLayoutId = piecesLayoutId;
     }
 }

@@ -18,7 +18,6 @@ import androidx.fragment.app.DialogFragment;
 
 import com.sportsquizpuzzle.customViews.Modal;
 import com.sportsquizpuzzle.utils.Constants;
-import com.sportsquizpuzzle.utils.SPHelper;
 import com.sportsquizpuzzle.utils.SPService;
 import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.i18n;
@@ -148,7 +147,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
         } else {
             if(serviceBound) {
                 spService.setSoundOn(true);
-                spService.play(SPHelper.BUTTON);
+                spService.play(Constants.BUTTON);
             }
 
             soundOn = true;
@@ -158,7 +157,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
 
     private void onClickLanguage() {
         if(serviceBound)
-            spService.play(SPHelper.BUTTON);
+            spService.play(Constants.BUTTON);
 
         if (lan.equals(Constants.LAN_ENG)) {
             lan = Constants.LAN_RU;
@@ -175,7 +174,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
 
     private void onClickRemove() {
         if(serviceBound)
-            spService.play(SPHelper.BUTTON);
+            spService.play(Constants.BUTTON);
 
         Modal modal = new Modal(getString(R.string.remove_warning), this);
         modal.show(getChildFragmentManager(), "Modal-Remove");
@@ -185,7 +184,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     public void onModalResult(boolean res) {
         if (res) {
             if(serviceBound)
-                spService.play(SPHelper.DELETE);
+                spService.play(Constants.DELETE);
 
             if(getContext() == null)
                 return;
@@ -193,7 +192,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
             SharedValues.setInt(getContext(), Constants.KEY_CURRENT_LEVEL, 1);
         }else{
             if(serviceBound)
-                spService.play(SPHelper.BUTTON);
+                spService.play(Constants.BUTTON);
         }
     }
 
