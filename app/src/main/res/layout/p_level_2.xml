@@ -14,7 +14,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/p_soccer_1"
+            android:src="@drawable/p_soccer_2"
             />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -27,7 +27,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/p_soccer_2"
+            android:src="@drawable/p_soccer_1"
             />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -22,6 +22,8 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
     private Level level;
 
     private LinearLayoutCompat piecesHolder;
+    private LinearLayoutCompat targetHolder;
+    private View highlightedArea;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +45,9 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
         piecesHolder = findViewById(R.id.piece_holder);
 
         View view = getLayoutInflater().inflate(level.getPiecesLayoutId(), null);
-        view
+        //view
 
-        piecesHolder.addView( );
+        //piecesHolder.addView( );
 
     }
 
