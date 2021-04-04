@@ -3,10 +3,14 @@ package com.sportsquizpuzzle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +22,7 @@ import com.sportsquizpuzzle.puzzle.Level;
 import com.sportsquizpuzzle.puzzle.Levels;
 import com.sportsquizpuzzle.puzzle.Piece;
 import com.sportsquizpuzzle.utils.Constants;
+import com.sportsquizpuzzle.utils.SPService;
 import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.SystemUtils;
 
@@ -44,6 +49,9 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
     private boolean onComplete;
     private boolean clickableUI;
 
+    private SPService spService = null;
+    private boolean serviceBound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +68,9 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
     }
 
     private void init() {
+        Intent intent = new Intent(this, SPService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
         findViewById(R.id.close).setOnClickListener(this);
 
         buttonContainer = findViewById(R.id.button_container);
@@ -104,6 +115,9 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.close) {
+            if(serviceBound)
+                spService.play(Constants.BUTTON);
+
             this.finish();
         } else if (view.getId() == R.id.button_1) {
             if(!clickableUI)
@@ -111,9 +125,15 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
             clickableUI = false;
 
             if (selectedButton == 1) {
+                if(serviceBound)
+                    spService.play(Constants.WIN);
+
                 button_1.setImageResource(R.drawable.button_green_background);
                 new Handler().postDelayed(() -> setNextLevel(true), 750);
             } else {
+                if(serviceBound)
+                    spService.play(Constants.LOSE);
+
                 button_1.setImageResource(R.drawable.button_red_background);
                 new Handler().postDelayed(() -> setNextLevel(false), 750);
             }
@@ -123,9 +143,15 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
             clickableUI = false;
 
             if (selectedButton == 2) {
+                if(serviceBound)
+                    spService.play(Constants.WIN);
+
                 button_2.setImageResource(R.drawable.button_green_background);
                 new Handler().postDelayed(() -> setNextLevel(true), 750);
             } else {
+                if(serviceBound)
+                    spService.play(Constants.LOSE);
+
                 button_2.setImageResource(R.drawable.button_red_background);
                 new Handler().postDelayed(() -> setNextLevel(false), 750);
             }
@@ -135,9 +161,15 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
             clickableUI = false;
 
             if (selectedButton == 3) {
+                if(serviceBound)
+                    spService.play(Constants.WIN);
+
                 button_3.setImageResource(R.drawable.button_green_background);
                 new Handler().postDelayed(() -> setNextLevel(true), 750);
             } else {
+                if(serviceBound)
+                    spService.play(Constants.LOSE);
+
                 button_3.setImageResource(R.drawable.button_red_background);
                 new Handler().postDelayed(() -> setNextLevel(false), 750);
             }
@@ -246,4 +278,15 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
                 return "Soccer";
         }
     }
+
+    private final ServiceConnection connection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            SPService.SPBinder binder = (SPService.SPBinder) service;
+            spService = binder.getService();
+            serviceBound = true;
+        }
+        public void onServiceDisconnected(ComponentName arg0) {
+            serviceBound = false;
+        }
+    };
 }
