@@ -63,4 +63,78 @@
 
     </RelativeLayout>
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:id="@+id/button_container"
+        android:paddingVertical="12dp"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="144dp"
+                    android:layout_height="44dp"
+                    android:id="@+id/button_1"
+                    android:src="@drawable/button_normal_background"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/basketball"
+                    android:id="@+id/text_1"
+                    />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="144dp"
+                    android:layout_height="44dp"
+                    android:id="@+id/button_2"
+                    android:src="@drawable/button_normal_background"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/basketball"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/text_2"
+                    />
+            </RelativeLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="144dp"
+                android:id="@+id/button_3"
+                android:layout_height="44dp"
+                android:src="@drawable/button_normal_background"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/basketball"
+                android:layout_centerInParent="true"
+                android:id="@+id/text_3"
+                />
+        </RelativeLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </RelativeLayout>

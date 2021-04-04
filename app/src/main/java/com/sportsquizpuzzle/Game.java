@@ -4,9 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.sportsquizpuzzle.listener.DragListener;
 import com.sportsquizpuzzle.listener.TouchListener;
@@ -16,6 +20,10 @@ import com.sportsquizpuzzle.puzzle.Piece;
 import com.sportsquizpuzzle.utils.Constants;
 import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.SystemUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 public class Game extends AppCompatActivity implements View.OnClickListener, DragListener.OnCompleteListener {
 
@@ -27,6 +35,14 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
     private LinearLayoutCompat piecesHolder;
     private LinearLayoutCompat targetHolder;
     private View highlightedArea;
+
+    private LinearLayoutCompat buttonContainer;
+    private ImageView button_1;
+    private ImageView button_2;
+    private ImageView button_3;
+    private int selectedButton;
+    private boolean onComplete;
+    private boolean clickableUI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,23 +62,40 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
     private void init() {
         findViewById(R.id.close).setOnClickListener(this);
 
+        buttonContainer = findViewById(R.id.button_container);
         piecesHolder = findViewById(R.id.piece_holder);
         targetHolder = findViewById(R.id.target_holder);
         highlightedArea = findViewById(R.id.highlighted_view);
 
+        button_1 = findViewById(R.id.button_1);
+        button_2 = findViewById(R.id.button_2);
+        button_3 = findViewById(R.id.button_3);
+        button_1.setOnClickListener(this);
+        button_2.setOnClickListener(this);
+        button_3.setOnClickListener(this);
+
         setLevelUI();
     }
 
-    private void setLevelUI(){
+    private void setLevelUI() {
+        onComplete = false;
+        clickableUI = true;
+
+        buttonContainer.setVisibility(View.GONE);
+
         piecesHolder.removeAllViews();
         targetHolder.removeAllViews();
+
+        button_1.setImageResource(R.drawable.button_normal_background);
+        button_2.setImageResource(R.drawable.button_normal_background);
+        button_3.setImageResource(R.drawable.button_normal_background);
 
         DragListener listener = new DragListener(this, level.getPieces(), highlightedArea, this);
 
         piecesHolder.addView(getLayoutInflater().inflate(level.getPiecesLayoutId(), null));
         targetHolder.addView(getLayoutInflater().inflate(level.getTargetLayoutId(), null));
 
-        for(Piece piece: level.getPieces()){
+        for (Piece piece : level.getPieces()) {
             targetHolder.findViewById(piece.getTargetHolderId()).setOnDragListener(listener);
             piecesHolder.findViewById(piece.getId()).setOnTouchListener(new TouchListener());
         }
@@ -72,7 +105,60 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
     public void onClick(View view) {
         if (view.getId() == R.id.close) {
             this.finish();
+        } else if (view.getId() == R.id.button_1) {
+            if(!clickableUI)
+                return;
+            clickableUI = false;
+
+            if (selectedButton == 1) {
+                button_1.setImageResource(R.drawable.button_green_background);
+                new Handler().postDelayed(() -> setNextLevel(true), 750);
+            } else {
+                button_1.setImageResource(R.drawable.button_red_background);
+                new Handler().postDelayed(() -> setNextLevel(false), 750);
+            }
+        } else if (view.getId() == R.id.button_2) {
+            if(!clickableUI)
+                return;
+            clickableUI = false;
+
+            if (selectedButton == 2) {
+                button_2.setImageResource(R.drawable.button_green_background);
+                new Handler().postDelayed(() -> setNextLevel(true), 750);
+            } else {
+                button_2.setImageResource(R.drawable.button_red_background);
+                new Handler().postDelayed(() -> setNextLevel(false), 750);
+            }
+        } else if (view.getId() == R.id.button_3) {
+            if(!clickableUI)
+                return;
+            clickableUI = false;
+
+            if (selectedButton == 3) {
+                button_3.setImageResource(R.drawable.button_green_background);
+                new Handler().postDelayed(() -> setNextLevel(true), 750);
+            } else {
+                button_3.setImageResource(R.drawable.button_red_background);
+                new Handler().postDelayed(() -> setNextLevel(false), 750);
+            }
+        } else {
+            Log.d(TAG, "Unimplemented call");
         }
+    }
+
+    private void setNextLevel(boolean win){
+        if(win){
+            if(currentLevel == Constants.MAX_LEVEL){
+
+                return;
+            }
+
+            currentLevel += 1;
+            level = Levels.getLevel(currentLevel);
+            SharedValues.setInt(this, Constants.KEY_CURRENT_LEVEL, currentLevel);
+
+        }
+        setLevelUI();
     }
 
     @Override
@@ -85,16 +171,70 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
 
     @Override
     public void onComplete() {
-        Log.d(TAG, "onComplete");
-        if(this.currentLevel == Constants.MAX_LEVEL){
-
+        if (onComplete) {
             return;
         }
 
-        this.currentLevel += 1;
-        this.level = Levels.getLevel(this.currentLevel);
-        SharedValues.setInt(this, Constants.KEY_CURRENT_LEVEL, this.currentLevel);
+        onComplete = true;
 
-        setLevelUI();
+        Log.d(TAG, "onComplete");
+        setButtonText();
+
+        buttonContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void setButtonText() {
+        ArrayList<String> names = new ArrayList<>(Arrays.asList(Levels.names));
+        String levelObjName = level.getObjectName();
+        names.remove(levelObjName);
+
+        selectedButton = new Random().nextInt(3) + 1;
+
+        if (selectedButton == 1) {
+            ((TextView) findViewById(R.id.text_1)).setText(getI18nString(levelObjName));
+        } else {
+            int index = new Random().nextInt(names.size() - 1);
+            String random = names.remove(index);
+            ((TextView) findViewById(R.id.text_1)).setText(getI18nString(random));
+        }
+
+        if (selectedButton == 2) {
+            ((TextView) findViewById(R.id.text_2)).setText(getI18nString(levelObjName));
+        } else {
+            int index = new Random().nextInt(names.size() - 1);
+            String random = names.remove(index);
+            ((TextView) findViewById(R.id.text_2)).setText(getI18nString(random));
+        }
+
+        if (selectedButton == 3) {
+            ((TextView) findViewById(R.id.text_3)).setText(getI18nString(levelObjName));
+        } else {
+            int index = new Random().nextInt(names.size() - 1);
+            String random = names.remove(index);
+            ((TextView) findViewById(R.id.text_3)).setText(getI18nString(random));
+        }
+    }
+
+    private String getI18nString(String name) {
+        switch (name) {
+            case "Soccer":
+                return getString(R.string.soccer);
+            case "Basketball":
+                return getString(R.string.basketball);
+            case "Volleyball":
+                return getString(R.string.volleyball);
+            case "Tennis":
+                return getString(R.string.tennis);
+            case "Golf":
+                return getString(R.string.golf);
+            case "Bowling":
+                return getString(R.string.bowling);
+            case "Pool":
+                return getString(R.string.pool);
+            case "Hockey":
+                return getString(R.string.hockey);
+            default:
+                return "Soccer";
+        }
     }
 }

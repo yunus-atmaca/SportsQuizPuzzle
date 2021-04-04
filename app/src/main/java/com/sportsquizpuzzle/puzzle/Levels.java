@@ -3,6 +3,18 @@ package com.sportsquizpuzzle.puzzle;
 import com.sportsquizpuzzle.R;
 
 public class Levels {
+
+    public static final String [] names = new String[] {
+            "Soccer",
+            "Basketball",
+            "Volleyball",
+            "Tennis",
+            "Golf",
+            "Bowling",
+            "Pool",
+            "Hockey"
+    };
+
     public static Level getLevel(int level) {
         if (level == 2) {
             return getLevel2();
@@ -12,6 +24,12 @@ public class Levels {
             return getLevel4();
         } else if (level == 5) {
             return getLevel5();
+        } else if(level == 6){
+            //return getLevel5();
+        }else if(level == 7){
+            //return getLevel5();
+        }else if(level == 8){
+            //return getLevel5();
         }
         return getLevel1();
     }
