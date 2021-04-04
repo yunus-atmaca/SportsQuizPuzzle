@@ -5,6 +5,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.sportsquizpuzzle.listener.DragListener;
@@ -12,9 +13,11 @@ import com.sportsquizpuzzle.listener.TouchListener;
 import com.sportsquizpuzzle.puzzle.Level;
 import com.sportsquizpuzzle.puzzle.Levels;
 import com.sportsquizpuzzle.puzzle.Piece;
+import com.sportsquizpuzzle.utils.Constants;
+import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.SystemUtils;
 
-public class Game extends AppCompatActivity implements View.OnClickListener {
+public class Game extends AppCompatActivity implements View.OnClickListener, DragListener.OnCompleteListener {
 
     private static final String TAG = "GAME-ACTIVITY";
 
@@ -47,7 +50,14 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
         targetHolder = findViewById(R.id.target_holder);
         highlightedArea = findViewById(R.id.highlighted_view);
 
-        DragListener listener = new DragListener(this, level.getPieces(), highlightedArea);
+        setLevelUI();
+    }
+
+    private void setLevelUI(){
+        piecesHolder.removeAllViews();
+        targetHolder.removeAllViews();
+
+        DragListener listener = new DragListener(this, level.getPieces(), highlightedArea, this);
 
         piecesHolder.addView(getLayoutInflater().inflate(level.getPiecesLayoutId(), null));
         targetHolder.addView(getLayoutInflater().inflate(level.getTargetLayoutId(), null));
@@ -71,5 +81,20 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
         if (hasFocus) {
             SystemUtils.enableFullScreenUI(this);
         }
+    }
+
+    @Override
+    public void onComplete() {
+        Log.d(TAG, "onComplete");
+        if(this.currentLevel == Constants.MAX_LEVEL){
+
+            return;
+        }
+
+        this.currentLevel += 1;
+        this.level = Levels.getLevel(this.currentLevel);
+        SharedValues.setInt(this, Constants.KEY_CURRENT_LEVEL, this.currentLevel);
+
+        setLevelUI();
     }
 }

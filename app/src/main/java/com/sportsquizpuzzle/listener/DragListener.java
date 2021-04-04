@@ -25,7 +25,10 @@ public class DragListener implements View.OnDragListener {
 
     private View highlightedView;
 
-    public DragListener(Context context, Piece[] pieces, View view) {
+    private int completedPieces;
+    private OnCompleteListener listener;
+
+    public DragListener(Context context, Piece[] pieces, View view, OnCompleteListener listener) {
         this.pieces = pieces;
         this.isDropped = false;
 
@@ -33,6 +36,9 @@ public class DragListener implements View.OnDragListener {
         normalShape = ContextCompat.getDrawable(context, R.drawable.normal_shape);
 
         highlightedView = view;
+
+        this.completedPieces = 0;
+        this.listener = listener;
     }
 
     @Override
@@ -56,6 +62,7 @@ public class DragListener implements View.OnDragListener {
                 if (p != null) {
                     if (view.getId() == p.getTargetHolderId()) {
                         this.isDropped = true;
+                        this.completedPieces +=1;
                         RelativeLayout targetHolder = (RelativeLayout) view;
                         targetHolder.findViewById(p.getTargetImgId()).setVisibility(View.VISIBLE);
                     } else {
@@ -74,6 +81,10 @@ public class DragListener implements View.OnDragListener {
                     draggableObj.setVisibility(View.INVISIBLE);
                 } else {
                     draggableObj.setVisibility(View.VISIBLE);
+                }
+
+                if(this.completedPieces == pieces.length){
+                    this.listener.onComplete();
                 }
                 break;
             default:

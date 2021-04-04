@@ -18,4 +18,6 @@ public class Constants {
     public static final int LOSE = R.raw.lose;
     public static final int START_GAME = R.raw.start_game;
     public static final int WIN = R.raw.win;
+
+    public static final int MAX_LEVEL = 8;
 }
