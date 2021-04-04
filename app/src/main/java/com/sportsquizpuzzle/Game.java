@@ -5,10 +5,10 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
+import com.sportsquizpuzzle.listener.DragListener;
+import com.sportsquizpuzzle.listener.TouchListener;
 import com.sportsquizpuzzle.puzzle.Level;
 import com.sportsquizpuzzle.puzzle.Levels;
 import com.sportsquizpuzzle.puzzle.Piece;
@@ -42,13 +42,20 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
 
     private void init() {
         findViewById(R.id.close).setOnClickListener(this);
+
         piecesHolder = findViewById(R.id.piece_holder);
+        targetHolder = findViewById(R.id.target_holder);
+        highlightedArea = findViewById(R.id.highlighted_view);
 
-        View view = getLayoutInflater().inflate(level.getPiecesLayoutId(), null);
-        //view
+        DragListener listener = new DragListener(this, level.getPieces(), highlightedArea);
 
-        //piecesHolder.addView( );
+        piecesHolder.addView(getLayoutInflater().inflate(level.getPiecesLayoutId(), null));
+        targetHolder.addView(getLayoutInflater().inflate(level.getTargetLayoutId(), null));
 
+        for(Piece piece: level.getPieces()){
+            targetHolder.findViewById(piece.getTargetHolderId()).setOnDragListener(listener);
+            piecesHolder.findViewById(piece.getId()).setOnTouchListener(new TouchListener());
+        }
     }
 
     @Override

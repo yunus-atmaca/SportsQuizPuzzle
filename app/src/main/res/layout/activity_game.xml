@@ -39,18 +39,20 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:src="@drawable/ic_target" />
+
         <View
             android:layout_width="188dp"
             android:layout_height="188dp"
+            android:importantForAccessibility="no"
             android:layout_centerInParent="true"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/normal_shape"
             android:visibility="visible"
-            android:id="@+id/highlighted"
+            android:id="@+id/highlighted_view"
             />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:id="@+id/targetHolder"
+            android:id="@+id/target_holder"
             android:gravity="center"
             android:layout_centerInParent="true"
             android:layout_height="wrap_content"/>

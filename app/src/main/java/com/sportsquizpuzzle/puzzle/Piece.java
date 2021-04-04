@@ -2,11 +2,15 @@ package com.sportsquizpuzzle.puzzle;
 
 public class Piece {
     private int position;
-    private int drawableResource;
+    private int id;
+    private int targetHolderId;
+    private int targetImgId;
 
-    public Piece(int position, int drawableResource) {
+    public Piece(int position, int id, int targetHolderId, int targetImgId) {
         this.position = position;
-        this.drawableResource = drawableResource;
+        this.id = id;
+        this.targetHolderId = targetHolderId;
+        this.targetImgId = targetImgId;
     }
 
     public int getPosition() {
@@ -17,11 +21,27 @@ public class Piece {
         this.position = position;
     }
 
-    public int getDrawableResource() {
-        return drawableResource;
+    public int getId() {
+        return id;
     }
 
-    public void setDrawableResource(int drawableResource) {
-        this.drawableResource = drawableResource;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getTargetHolderId() {
+        return targetHolderId;
+    }
+
+    public void setTargetHolderId(int targetHolderId) {
+        this.targetHolderId = targetHolderId;
+    }
+
+    public int getTargetImgId() {
+        return targetImgId;
+    }
+
+    public void setTargetImgId(int targetImgId) {
+        this.targetImgId = targetImgId;
     }
 }

@@ -5,6 +5,7 @@ public class Level {
     private int levelNumber;
     private Piece [] pieces;
     private String objectName;
+
     private int targetLayoutId;
     private int piecesLayoutId;
 

@@ -14,10 +14,10 @@ public class Levels {
     }
 
     private static Level getLevel1() {
-        Piece p1 = new Piece(1, R.drawable.p_soccer_1);
-        Piece p2 = new Piece(2, R.drawable.p_soccer_2);
+        Piece p1 = new Piece(1, R.id.lvl1_piece1, R.id.lvl1_target_holder1, R.id.lvl1_target_img1);
+        Piece p2 = new Piece(2, R.id.lvl1_piece2, R.id.lvl1_target_holder2, R.id.lvl1_target_img2);
 
-        return new Level("Level_1", 1, new Piece[]{p1, p2}, "soccer",
-                R.layout.level_1, R.layout.pieces_level_1);
+        return new Level("Level-1", 1, new Piece[]{p1, p2}, "soccer",
+                R.layout.t_level_1, R.layout.p_level_1);
     }
 }
