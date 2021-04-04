@@ -149,7 +149,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
     private void setNextLevel(boolean win){
         if(win){
             if(currentLevel == Constants.MAX_LEVEL){
-
+                onGameCompleted();
                 return;
             }
 
@@ -157,8 +157,17 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
             level = Levels.getLevel(currentLevel);
             SharedValues.setInt(this, Constants.KEY_CURRENT_LEVEL, currentLevel);
 
+            int completedLevel = SharedValues.getInt(this, Constants.KEY_COMPLETED_LEVEL, 1);
+            if(completedLevel <= currentLevel){
+                SharedValues.setInt(this, Constants.KEY_COMPLETED_LEVEL, currentLevel);
+            }
+
         }
         setLevelUI();
+    }
+
+    private void onGameCompleted(){
+        Log.d(TAG, "onGameCompleted");
     }
 
     @Override

@@ -4,10 +4,12 @@ import com.sportsquizpuzzle.R;
 
 public class Constants {
     public static final String PREFERENCE_NAME = "SportsQuizPuzzle";
+
     public static final String KEY_SOUND = "Sound";
     public static final String KEY_MUSIC = "Music";
     public static final String KEY_LANGUAGE = "Language";
     public static final String KEY_CURRENT_LEVEL = "CurrentLevel";
+    public static final String KEY_COMPLETED_LEVEL = "CompletedLevel";
 
     public static final String LAN_ENG = "eng";
     public static final String LAN_RU = "ru";

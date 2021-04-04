@@ -190,6 +190,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
                 return;
 
             SharedValues.setInt(getContext(), Constants.KEY_CURRENT_LEVEL, 1);
+            SharedValues.setInt(getContext(), Constants.KEY_COMPLETED_LEVEL, 1);
         }else{
             if(serviceBound)
                 spService.play(Constants.BUTTON);
