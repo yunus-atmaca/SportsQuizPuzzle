@@ -187,6 +187,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener, Dra
 
     private void onGameCompleted() {
         Log.d(TAG, "onGameCompleted");
+        findViewById(R.id.close).performClick();
     }
 
     @Override
