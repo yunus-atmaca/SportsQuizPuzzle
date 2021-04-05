@@ -1,61 +1,61 @@
 package com.sportsquizpuzzle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.LinearLayoutCompat;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 
 import com.sportsquizpuzzle.utils.Constants;
-import com.sportsquizpuzzle.utils.SPService;
+import com.sportsquizpuzzle.utils.SPController;
 import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.SystemUtils;
 import com.sportsquizpuzzle.utils.i18n;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, ChooseLevels.LevelListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "Main-Activity";
 
-    private SPService spService = null;
-    private boolean serviceBound;
-
     private int currentLevel = 1;
+    private boolean onStartGame;
+
+    private LinearLayoutCompat root;
+    private SPController spController;
+    private boolean firstInit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SystemUtils.enableFullScreenUI(this);
-        /*getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);*/
-
         setContentView(R.layout.activity_main);
 
         init();
     }
 
     private void init() {
-        Intent intent = new Intent(this, SPService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-
         //Set language user selected
+        firstInit = true;
+
         String lan = SharedValues.getString(getApplicationContext(), Constants.KEY_LANGUAGE, Constants.LAN_ENG);
         i18n.loadLanguage(this, lan);
 
         currentLevel = SharedValues.getInt(getApplicationContext(), Constants.KEY_CURRENT_LEVEL, 1);
 
+        root = findViewById(R.id.root);
+
         findViewById(R.id.play).setOnClickListener(this);
         findViewById(R.id.level_list).setOnClickListener(this);
         findViewById(R.id.settings).setOnClickListener(this);
+
+        onStartGame = false;
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.play) {
+            onStartGame = true;
             onPlayClick();
         } else if (view.getId() == R.id.settings) {
             onSettingsClick();
@@ -68,8 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onSettingsClick() {
         //Log.d(TAG, "onSettingsClick");
-        if(serviceBound)
-            spService.play(Constants.BUTTON);
+        spController.play(Constants.BUTTON);
 
         Settings settingsFrag = new Settings();
         settingsFrag.show(getSupportFragmentManager(), "Setting-Page");
@@ -77,27 +76,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onLevelListClick() {
         //Log.d(TAG, "onLevelListClick");
-        if(serviceBound)
-            spService.play(Constants.BUTTON);
+        spController.play(Constants.BUTTON);
 
-        ChooseLevels levels = new ChooseLevels(this);
+        ChooseLevels levels = new ChooseLevels();
         levels.show(getSupportFragmentManager(), "Levels-Page");
     }
 
     private void onPlayClick() {
         //Log.d(TAG, "onPlayClick");
-        if(serviceBound)
-            spService.play(Constants.START_GAME);
+        currentLevel = SharedValues.getInt(this, Constants.KEY_CURRENT_LEVEL, 1);
+        spController.play(Constants.START_GAME);
 
         Intent intent = new Intent(MainActivity.this, Game.class);
         intent.putExtra("level", currentLevel);
         MainActivity.this.startActivity(intent);
     }
 
-    @Override
-    public void onLevelSelected(int level) {
-        currentLevel = level;
-    }
+    /*private void enableViews(View v, boolean enabled) {
+        if (v instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) v;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                enableViews(vg.getChildAt(i), enabled);
+            }
+        }
+        v.setEnabled(enabled);
+    }*/
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -109,19 +112,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
-        unbindService(connection);
-        serviceBound = false;
+        Log.d(TAG, "onDestroy");
+        spController.releaseSP();
         super.onDestroy();
+
+        finishAndRemoveTask();
+        System.exit(0);
     }
 
-    private final ServiceConnection connection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            SPService.SPBinder binder = (SPService.SPBinder) service;
-            spService = binder.getService();
-            serviceBound = true;
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+
+        if(onStartGame){
+
+        }else{
+            spController.releaseSP();
         }
-        public void onServiceDisconnected(ComponentName arg0) {
-            serviceBound = false;
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        onStartGame = false;
+
+        if(firstInit){
+            firstInit = false;
+            spController = SPController.getInstance(getApplicationContext());
+        }else{
+            boolean music = SharedValues.getBoolean(this, Constants.KEY_MUSIC, true);
+            spController.setBackgroundMusic(music);
         }
-    };
+
+        super.onResume();
+    }
 }

@@ -1,11 +1,6 @@
 package com.sportsquizpuzzle;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.sportsquizpuzzle.utils.Constants;
-import com.sportsquizpuzzle.utils.SPService;
+import com.sportsquizpuzzle.utils.SPController;
 import com.sportsquizpuzzle.utils.SharedValues;
 
 import java.util.ArrayList;
@@ -28,17 +23,9 @@ public class ChooseLevels extends DialogFragment implements View.OnClickListener
 
     private View root;
 
-    //private int currentLevel = 1;
     private int completedLevel = 1;
 
-    private SPService spService = null;
-    private boolean serviceBound;
-
-    private final LevelListener listener;
-
-    public ChooseLevels(LevelListener listener) {
-        this.listener = listener;
-    }
+    private SPController spController;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -66,13 +53,11 @@ public class ChooseLevels extends DialogFragment implements View.OnClickListener
     }
 
     private void init() {
-        Intent intent = new Intent(getContext(), SPService.class);
-        getContext().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        spController = SPController.getInstance(getContext());
 
         String language = Constants.LAN_ENG;
 
         if (getContext() != null) {
-            //currentLevel = SharedValues.getInt(getContext(), Constants.KEY_CURRENT_LEVEL, 1);
             completedLevel = SharedValues.getInt(getContext(), Constants.KEY_COMPLETED_LEVEL, 1);
 
             language = SharedValues.getString(getContext(), Constants.KEY_LANGUAGE, Constants.LAN_ENG);
@@ -141,8 +126,7 @@ public class ChooseLevels extends DialogFragment implements View.OnClickListener
                 applyChanges(8);
             }
         } else if (view.getId() == R.id.close) {
-            if (serviceBound)
-                spService.play(Constants.BUTTON);
+            spController.play(Constants.BUTTON);
 
             dismiss();
             onDestroy();
@@ -181,13 +165,10 @@ public class ChooseLevels extends DialogFragment implements View.OnClickListener
     }
 
     private void applyChanges(int level) {
-        if (serviceBound)
-            spService.play(Constants.BUTTON);
+        spController.play(Constants.BUTTON);
 
         if (getContext() != null)
             SharedValues.setInt(getContext(), Constants.KEY_CURRENT_LEVEL, level);
-
-        listener.onLevelSelected(level);
 
         dismiss();
         onDestroy();
@@ -199,21 +180,5 @@ public class ChooseLevels extends DialogFragment implements View.OnClickListener
 
         Objects.requireNonNull(getDialog()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-    }
-
-    private final ServiceConnection connection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            SPService.SPBinder binder = (SPService.SPBinder) service;
-            spService = binder.getService();
-            serviceBound = true;
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-            serviceBound = false;
-        }
-    };
-
-    public interface LevelListener {
-        void onLevelSelected(int level);
     }
 }

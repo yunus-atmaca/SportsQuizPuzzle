@@ -1,11 +1,6 @@
 package com.sportsquizpuzzle;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +13,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.sportsquizpuzzle.customViews.Modal;
 import com.sportsquizpuzzle.utils.Constants;
-import com.sportsquizpuzzle.utils.SPService;
+import com.sportsquizpuzzle.utils.SPController;
 import com.sportsquizpuzzle.utils.SharedValues;
 import com.sportsquizpuzzle.utils.i18n;
 
@@ -38,8 +33,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     private boolean musicOn;
     private String lan;
 
-    private SPService spService;
-    private boolean serviceBound;
+    SPController spController;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -69,8 +63,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     }
 
     private void init() {
-        Intent intent = new Intent(getContext(), SPService.class);
-        getContext().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        spController = SPController.getInstance(getContext());
 
         music = root.findViewById(R.id.music);
         sound = root.findViewById(R.id.sound);
@@ -108,8 +101,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
         } else if (view.getId() == R.id.remove) {
             onClickRemove();
         } else if (view.getId() == R.id.close) {
-            if(serviceBound)
-                spService.play(Constants.BUTTON);
+            spController.play(Constants.BUTTON);
 
             dismiss();
             onDestroy();
@@ -119,36 +111,30 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     }
 
     private void onClickMusic() {
-        if(serviceBound)
-            spService.play(Constants.BUTTON);
+        spController.play(Constants.BUTTON);
 
         if (musicOn) {
             musicOn = false;
             music.setImageResource(R.drawable.ic_music_off);
 
-            if(serviceBound)
-                spService.setBackgroundMusic(false);
+            spController.setBackgroundMusic(false);
         } else {
             musicOn = true;
             music.setImageResource(R.drawable.ic_music_on);
 
-            if(serviceBound)
-                spService.setBackgroundMusic(true);
+            spController.setBackgroundMusic(true);
         }
     }
 
     private void onClickSound() {
         if (soundOn) {
-            if(serviceBound)
-                spService.setSoundOn(false);
+            spController.setSoundOn(false);
 
             soundOn = false;
             sound.setImageResource(R.drawable.ic_sound_off);
         } else {
-            if(serviceBound) {
-                spService.setSoundOn(true);
-                spService.play(Constants.BUTTON);
-            }
+            spController.setSoundOn(true);
+            spController.play(Constants.BUTTON);
 
             soundOn = true;
             sound.setImageResource(R.drawable.ic_sound_on);
@@ -156,8 +142,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     }
 
     private void onClickLanguage() {
-        if(serviceBound)
-            spService.play(Constants.BUTTON);
+        spController.play(Constants.BUTTON);
 
         if (lan.equals(Constants.LAN_ENG)) {
             lan = Constants.LAN_RU;
@@ -173,8 +158,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     }
 
     private void onClickRemove() {
-        if(serviceBound)
-            spService.play(Constants.BUTTON);
+        spController.play(Constants.BUTTON);
 
         Modal modal = new Modal(getString(R.string.remove_warning), this);
         modal.show(getChildFragmentManager(), "Modal-Remove");
@@ -183,8 +167,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
     @Override
     public void onModalResult(boolean res) {
         if (res) {
-            if(serviceBound)
-                spService.play(Constants.DELETE);
+            spController.play(Constants.DELETE);
 
             if(getContext() == null)
                 return;
@@ -192,8 +175,7 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
             SharedValues.setInt(getContext(), Constants.KEY_CURRENT_LEVEL, 1);
             SharedValues.setInt(getContext(), Constants.KEY_COMPLETED_LEVEL, 1);
         }else{
-            if(serviceBound)
-                spService.play(Constants.BUTTON);
+            spController.play(Constants.BUTTON);
         }
     }
 
@@ -218,15 +200,4 @@ public class Settings extends DialogFragment implements View.OnClickListener, Mo
         Objects.requireNonNull(getDialog()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
-
-    private final ServiceConnection connection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            SPService.SPBinder binder = (SPService.SPBinder) service;
-            spService = binder.getService();
-            serviceBound = true;
-        }
-        public void onServiceDisconnected(ComponentName arg0) {
-            serviceBound = false;
-        }
-    };
 }
